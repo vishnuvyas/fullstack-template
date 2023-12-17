@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 import os
@@ -32,6 +32,12 @@ class DatabaseProvider:
         self._engine.dispose()
         self._engine = None
         self._session_maker = None
+
+    def create_all(self, metadata: MetaData):
+        metadata.create_all(bind=self._engine)
+
+    def drop_all(self, metadata: MetaData):
+        metadata.drop_all(bind=self._engine)
 
 
 @contextmanager
