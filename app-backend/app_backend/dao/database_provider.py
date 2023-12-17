@@ -2,6 +2,9 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 import os
+import structlog
+
+logger = structlog.get_logger(name=__name__)
 
 
 class DatabaseProvider:
@@ -34,9 +37,15 @@ class DatabaseProvider:
         self._session_maker = None
 
     def create_all(self, metadata: MetaData):
+        if not self.testing:
+            logger.warn(message='create all called in a non test context')
+
         metadata.create_all(bind=self._engine)
 
     def drop_all(self, metadata: MetaData):
+        if not self.testing:
+            logger.warn(message='drop all called in a non test context')
+
         metadata.drop_all(bind=self._engine)
 
 
