@@ -10,6 +10,7 @@ class Directory(BaseModel, table=True):
     owner: str = Field(sa_column=Column(EmailType))
     capabilties: List['Capability'] = Relationship(back_populates="directory")
     roles: List['Role'] = Relationship(back_populates='directory')
+    users: List['User'] = Relationship(back_populates='directory')
 
 
 class RoleCapability(SQLModel, table=True):
@@ -45,5 +46,7 @@ class User(BaseModel, table=True):
     email: str = Field(sa_column=Column(EmailType))
     password: str = Field(sa_column=Column(
         PasswordType(length=8, max_length=20)))
+    dir_id: int = Field(default=None, foreign_key="directory.id")
+    directroy: Directory = Relationship(back_populates='users')
     roles: List[Role] = Relationship(
         back_populates='users', link_model=UserRole)
